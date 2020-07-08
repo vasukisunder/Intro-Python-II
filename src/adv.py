@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -39,6 +40,11 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
+print('\nWelcome to your game!')
+
+
+player = Player(room['outside'])
+
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +55,36 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+def print_room(player): 
+    print("\nYou are currently in the " + player.room.name)
+    print(f'{player.room.desc}\n')
+
+
+action = input("Press ENTER to continue...\n")
+
+while action!='Q':
+    print_room(player)
+    action = input("[N] North [S] South [E] East [W] West [Q] Quit\n").upper()
+
+    if action == 'N' or action == 'S' or action == 'E' or action == 'W':
+        if action == 'N' and player.room.n_to != None:
+            player.room = player.room.n_to
+        elif action == 'S' and player.room.s_to != None:
+            player.room = player.room.s_to
+        elif action == 'E' and player.room.e_to != None:
+            player.room = player.room.e_to
+        elif action == 'W' and player.room.w_to != None:
+            player.room = player.room.w_to
+        else: 
+            print('\nThere is no room in that direction.\n')
+    elif action != 'Q': 
+        print('\nYou can only move N, S, E, or W.')
+    else:
+        print('\nGoodbye!\n')
+    
+
+
+
+
+
