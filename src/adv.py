@@ -1,18 +1,24 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
-
+item = {
+    'SWORD': Item('SWORD', ''),
+    'COINS': Item('COINS', ''),
+    'SHIELD': Item('SHIELD', ''),
+    'BOOK': Item('BOOK', '')
+}
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", [item['SWORD']]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", [item['BOOK']]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [item['SHIELD'], item['COINS']]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
 to north. The smell of gold permeates the air."""),
@@ -45,27 +51,27 @@ print('\nWelcome to your game!')
 
 player = Player(room['outside'])
 
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
 
 def print_room(player): 
     print("\nYou are currently in the " + player.room.name)
     print(f'{player.room.desc}\n')
+
+    if player.room.items == []:
+        print('No items in this room.\n')
+    else:
+        print('Items in this room:')
+        for item in player.room.items:
+            print(f'{item.name}\n')
+
+
+
 
 
 action = input("Press ENTER to continue...\n")
 
 while action!='Q':
     print_room(player)
-    action = input("[N] North [S] South [E] East [W] West [Q] Quit\n").upper()
+    action = input("[N] North [S] South [E] East [W] West\n[I] Inventory\n[Q] Quit\n").upper()
 
     if action == 'N' or action == 'S' or action == 'E' or action == 'W':
         if action == 'N' and player.room.n_to != None:
@@ -78,11 +84,30 @@ while action!='Q':
             player.room = player.room.w_to
         else: 
             print('\nThere is no room in that direction.\n')
+    elif action == 'I':
+        player.print_inventory()
+    elif action.split()[0] == 'GET' or action.split()[0] == 'TAKE':
+        if item[action.split()[1]] in player.room.items:
+            pickedItem = item[action.split(' ')[1]]
+            player.room.items.remove(pickedItem)
+            player.inventory.append(pickedItem)
+            pickedItem.on_take()
+        else:
+            print('No such item in this room.')
+    elif action.split()[0] == 'DROP':
+        if item[action.split()[1]] in player.inventory:
+            droppedItem = item[action.split()[1]]
+            player.inventory.remove(droppedItem)
+            player.room.items.append(droppedItem)
+            droppedItem.on_drop()
+        else:
+            print('No such item in your inventory.')
     elif action != 'Q': 
-        print('\nYou can only move N, S, E, or W.')
+        print('Invalid command.\n')
     else:
         print('\nGoodbye!\n')
     
+
 
 
 
