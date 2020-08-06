@@ -2,7 +2,7 @@
 # description attributes.
 
 class Room:
-    def __init__(self, name, desc, items = []):
+    def __init__(self, name, desc, items = [], is_light = False):
         self.name = name
         self.desc = desc
         self.n_to = None
@@ -10,3 +10,5 @@ class Room:
         self.w_to = None
         self.e_to = None
         self.items = items
+        self.is_light = is_light
+        
